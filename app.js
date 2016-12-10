@@ -6,6 +6,7 @@
 
 // This application uses express as its web server
 // for more info, see: http://expressjs.com
+/*
 var express = require('express');
 
 // cfenv provides access to your Cloud Foundry environment
@@ -26,3 +27,29 @@ app.listen(appEnv.port, '0.0.0.0', function() {
   // print a message when the server starts listening
   console.log("server starting on " + appEnv.url);
 });
+*/
+var unirest = require('unirest');
+var cfenv = require('cfenv');
+var appEnv = cfenv.getAppEnv();
+var port = (appEnv.port || 8888);
+var WebSocketServer = require('ws').Server
+  , wss = new WebSocketServer({port: port});
+
+
+wss.on('connection', function(ws) {
+    
+    // do nothing
+		  
+});
+
+wss.broadcast = function(data) {
+	for (var i in wss.clients)
+    	wss.clients[i].send(data);
+};
+
+setInterval(function(){
+  unirest.get('https://twitterrest03.mybluemix.net/tweets')
+  	.end(function(resp){
+  		wss.broadcast(JSON.stringify(resp.body));		
+  	});  
+}, 2000);
