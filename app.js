@@ -52,4 +52,4 @@ setInterval(function(){
   	.end(function(resp){
   		wss.broadcast(JSON.stringify(resp.body));		
   	});  
-}, 5000);
+}, 10000);
